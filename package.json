@@ -4,7 +4,7 @@
   "description": "Language support for Java + Kotlin projects",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fwcd/kotlin-language-server.git"
+    "url": "https://github.com/fwcd/vscode-java-kotlin.git"
   },
   "version": "0.0.1",
   "publisher": "fwcd",
