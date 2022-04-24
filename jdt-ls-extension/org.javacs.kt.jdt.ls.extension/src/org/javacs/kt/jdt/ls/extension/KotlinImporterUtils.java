@@ -26,27 +26,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jdt.core.IClasspathAttribute;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.core.ClasspathEntry;
 import org.eclipse.jdt.ls.core.internal.JavaLanguageServerPlugin;
 import org.eclipse.jdt.ls.core.internal.managers.IBuildSupport;
 import org.eclipse.jdt.ls.core.internal.managers.ProjectsManager.CHANGE_TYPE;
 
 @SuppressWarnings("restriction")
 public class KotlinImporterUtils {
-    
-    /**
-     * Checks if any kotlin files exist in the given directory and subdirectories.
-     */
-    public static boolean anyKotlinFiles(java.nio.file.Path directory) {
-        try (Stream<java.nio.file.Path> files = Files.walk(directory)) {
-            return files.anyMatch(f -> f.getFileName().toString().endsWith(".kt"));
-        } catch (IOException ex) {
-            return false;
-        }
-    }
 
+	/**
+	 * Sets the KLS classpath entry.
+	 * This is the path where the KLS stores build outputs (i.e., Kotlin compiled code).
+	 * The entry has an extra attribute, which is used to remove old paths whenever they change, since this is something that is kept between sessions.
+	 */
     public static void setKlsClasspathEntry(IProject project, java.nio.file.Path path, IProgressMonitor monitor, IBuildSupport buildSupport) throws CoreException {
 		IJavaProject javaProject = JavaCore.create(project);
 
@@ -54,7 +50,17 @@ public class KotlinImporterUtils {
 		IPath klsPath = Path.fromOSString(path.toString());
 
 		entries.removeIf(entry -> entry.getPath().equals(klsPath));
-		IClasspathEntry classpathEntry = JavaCore.newLibraryEntry(klsPath, null, null);
+		entries.removeIf(entry -> Stream.of(entry.getExtraAttributes()).anyMatch(attribute -> attribute.getName().equals("kls")));
+		IClasspathEntry classpathEntry = JavaCore.newLibraryEntry(
+			klsPath,
+			null,
+			null,
+			ClasspathEntry.NO_ACCESS_RULES,
+			new IClasspathAttribute[]{
+				JavaCore.newClasspathAttribute("kls", "true")
+			},
+			false
+		);
 		entries.add(classpathEntry);
 
 		javaProject.setRawClasspath(entries.toArray(new IClasspathEntry[0]), monitor);
@@ -62,9 +68,9 @@ public class KotlinImporterUtils {
 	}
 
     /**
-	 * Registers a watcher for the kls directory.
+	 * Registers a watcher for the kls build output directory.
 	 * Any file change leads to an update in the classpath.
-     * The classpath update is done using a function send as parameter, since it's different for each importer.
+     * The classpath update is done using a function sent as parameter, since it's dependent on the build tool used.
 	 */
 	public static void registerKlsWatcher(java.nio.file.Path path, Function<IProgressMonitor, IStatus> updateClasspathJob) {
 		new Thread(() -> {

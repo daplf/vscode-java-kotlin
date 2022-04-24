@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-      <extension
-            id="importers"
-            point="org.eclipse.jdt.ls.core.importers">
-            <importer
-                  id = "kotlinGradleImporter"
-                  order = "125"
-                  class = "org.javacs.kt.jdt.ls.extension.KotlinGradleImporter"/>
-            <importer
-                  id = "kotlinMavenImporter"
-                  order = "150"
-                  class = "org.javacs.kt.jdt.ls.extension.KotlinMavenImporter"/>
+      <extension point="org.eclipse.jdt.ls.core.delegateCommandHandler">
+            <delegateCommandHandler class="org.javacs.kt.jdt.ls.extension.SetKotlinBuildOutputCommandHandler">
+                  <command
+                        id="kotlin.java.setKotlinBuildOutput"
+                        static="true"/>
+            </delegateCommandHandler>
       </extension>
 </plugin>
  
