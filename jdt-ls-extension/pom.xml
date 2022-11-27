@@ -13,8 +13,8 @@
 	</modules>
 
 	<properties>
-		<java.version>11</java.version>
-		<tycho-version>1.7.0</tycho-version>
+		<java.version>17</java.version>
+		<tycho-version>2.7.4</tycho-version>
 	</properties>
 
 	<repositories>
