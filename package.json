@@ -4,10 +4,10 @@
   "description": "Language support for Java + Kotlin projects",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fwcd/vscode-java-kotlin.git"
+    "url": "https://github.com/daplf/vscode-java-kotlin.git"
   },
   "version": "0.0.1",
-  "publisher": "fwcd",
+  "publisher": "daplf",
   "license": "MIT",
   "categories": [
     "Programming Languages"
