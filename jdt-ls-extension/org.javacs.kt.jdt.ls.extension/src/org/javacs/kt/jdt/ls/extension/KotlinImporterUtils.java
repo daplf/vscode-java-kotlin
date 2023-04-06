@@ -81,7 +81,7 @@ public class KotlinImporterUtils {
 				WatchService watcher = FileSystems.getDefault().newWatchService();
 				keys.putAll(watchDirectory(watcher, path));
 
-				// Wair for file related events.
+				// Wait for file related events.
 				// When a file is added or deleted, we update the classpath (we remove and re-add the kls classpath entry)
 				while (true) {
 					WatchKey key;
