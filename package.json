@@ -1,6 +1,6 @@
 {
   "name": "vscode-java-kotlin",
-  "displayName": "Java Kotlin",
+  "displayName": "Java + Kotlin",
   "description": "Language support for Java + Kotlin projects",
   "repository": {
     "type": "git",
